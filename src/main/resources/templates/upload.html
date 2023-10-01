@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>파일 업로드</title>
+</head>
+<body>
+<a href="/download"> <--  다운로드 페이지로 </a>
+<h2> 파일 업로드 </h2>
+<form id="uploadForm" enctype="multipart/form-data">
+    <input type="file" name="fileInput" id="fileInput" accept=".txt, .pdf, .jpg"> <!-- 업로드할 파일 선택 -->
+    <input type="submit" value="업로드"> <!-- 업로드 버튼 -->
+</form>
+<span id="message"> </span>
+
+<script>
+    const uploadForm = document.getElementById("uploadForm");
+    const fileInput = document.getElementById("fileInput");
+    const messageElement = document.getElementById("message");
+
+    uploadForm.addEventListener("submit", async (event) => {
+        event.preventDefault();
+
+        const formData = new FormData();
+        formData.append("file", fileInput.files[0]); // 업로드할 파일 추가
+
+        try {
+            const response = await fetch("/api/v1/rest/aws/upload", {
+                method: "POST",
+                body: formData,
+            });
+
+            if (response.status === 200) {
+                messageElement.innerHTML = "파일 업로드에 성공하였습니다.";
+            } else {
+                messageElement.innerHTML = "파일 업로드에 실패하였습니다.";
+            }
+        } catch (error) {
+            console.error("파일 업로드 오류:", error);
+            messageElement.innerHTML = "파일 업로드 중 오류가 발생하였습니다.";
+        }
+    });
+</script>
+</body>
+</html>
